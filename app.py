@@ -23,8 +23,6 @@ def save_cache(data):
 
 # Check for updates
 def check_for_updates():
-    update_button.config(bg='green', state='normal')
-    return
     try:
         subprocess.run(["git", "fetch"], check=True)
         status = subprocess.check_output(["git", "status"]).decode("utf-8")
