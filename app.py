@@ -97,7 +97,7 @@ difficulty_combobox.grid(row=end_row + 1, column=1, columnspan=4,  padx=10, pady
 difficulty_combobox.set(cache["difficulty"])
 
 # Generate Button
-generate_button = tk.Button(app, text="Generate Prompt", command=generate_prompt)
+generate_button = tk.Button(app, text="Generate Prompt Ilhan", command=generate_prompt)
 generate_button.grid(row=end_row + 2, column=0, columnspan=2, pady=10)
 
 # Update Button
