@@ -73,7 +73,7 @@ for i, item in enumerate(items):
     tk.Checkbutton(app, text=item, variable=selected_vars[i]).grid(row=1, column=1 + i, padx=5, pady=5)
 
 # Difficulty Level
-tk.Label(app, text="Difficulty").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+tk.Label(app, text="Difficulty:::").grid(row=2, column=0, padx=10, pady=5, sticky="w")
 difficulty_levels = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard"]
 difficulty_combobox = ttk.Combobox(app, values=difficulty_levels, state="readonly", width=15)
 difficulty_combobox.grid(row=2, column=1, padx=10, pady=5)
