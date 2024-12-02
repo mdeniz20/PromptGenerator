@@ -60,7 +60,7 @@ bash
 
 # Problem Characteristics
 ### Practiced Topics
-- The problem should practice <topic>.
+- The problem should practice: <topic>.
 ### Difficulty
 - The difficulty level is <difficulty>.
 ### Concept
@@ -68,4 +68,4 @@ bash
 
 # Additional Requests
 ## Generate the problem on these additional requests.
-- The program is required to validate every user input.
+- <additional_notes>

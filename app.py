@@ -1,5 +1,6 @@
 from calendar import c
 from ctypes import alignment
+from operator import ge
 import tkinter as tk
 from tkinter import ttk
 from turtle import up, update, width
@@ -9,6 +10,7 @@ import pickle
 import os
 import sys
 
+from prompt_generator import Prompt_Generator
 from topics import Topics
 
 
@@ -60,10 +62,19 @@ def generate_prompt():
     concept = concept_input.get()
     selected_items = [item for item, var in zip(items, selected_vars) if var.get()]
     difficulty = difficulty_combobox.get()
-    prompt = f"Concept: {concept}\nSelected Items: {', '.join(selected_items)}\nDifficulty: {difficulty}"
+    note = notes.get("1.0", "end-1c")
+    if not concept:
+        copied_label.config(text="Please enter a concept.", fg="red")
+        app.after(2000, lambda: copied_label.config(text=""))
+        return
+    if not selected_items:
+        copied_label.config(text="Please select at least one item.", fg="red")
+        app.after(2000, lambda: copied_label.config(text=""))
+        return
+    prompt = prompter.generate_prompt(concept, selected_items, difficulty, note)   
     pyperclip.copy(prompt)
-    save_cache({"concept": concept, "selected_items": selected_items, "difficulty": difficulty})
-    copied_label.config(text="Prompt copied to the clipboard.")
+    save_cache({"concept": concept, "selected_items": selected_items, "difficulty": difficulty, "notes": note})
+    copied_label.config(text="Prompt copied to the clipboard.", fg="green")
     app.after(2000, lambda: copied_label.config(text=""))
 
 def set_update_label(is_update_available):
@@ -89,7 +100,7 @@ def show_window():
     y = (screen_height // 2) - (window_height // 2)
 
     # Set the app's position
-    app.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    # app.geometry(f"{window_width}x{window_height}+{x}+{y}") #uncomment this line to center the window
     app.deiconify()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -112,6 +123,7 @@ concept_input.insert(0, cache["concept"])
 
 #Topics
 topics = Topics(topics_file)
+prompter = Prompt_Generator()
 
 # Selection Buttons
 tk.Label(app, text="Select Items").grid(row=1, column=0, padx=10, pady=5, sticky="w")
@@ -128,7 +140,7 @@ for i, item in enumerate(items):
     # c_clm = 1 + i // c_row
     # print(c_row, c_clm)
     # check_button.grid(row =c_row, column = c_clm )
-    check_button.grid(row=1+i, column=1)
+    check_button.grid(row=1+i, column=1, columnspan=4)
 # end_row = width // 4 + 1
 end_row = len(items) + 1
  
@@ -139,13 +151,18 @@ difficulty_combobox = ttk.Combobox(app, values=difficulty_levels, state="readonl
 difficulty_combobox.grid(row=end_row + 1, column=1, columnspan=4,  padx=10, pady=5, sticky="w")
 difficulty_combobox.set(cache["difficulty"])
 
+tk.Label(app, text="Add your additional notes").grid(row=end_row + 2, column=0, padx=10, pady=5, sticky="w")
+notes = tk.Text(app, width=40, height=3)
+notes.grid(row=end_row + 2, column=1, columnspan=4, padx=10, pady=5, sticky="w")
+notes.insert("1.0", cache.get("notes", ""))
+
 # Generate Button
 generate_button = tk.Button(app, text="Copy Prompt to the Clipboard", command=generate_prompt)
-generate_button.grid(row=end_row + 2, column=0, columnspan=2, pady=10, padx=10)
-
+generate_button.grid(row=end_row + 7, column=0, columnspan=2, pady=0, padx=10, sticky="w")
+generate_button.update()
 # Copied Label
 copied_label = tk.Label(app, text="", fg="green")
-copied_label.grid(row=end_row + 2, column=2, columnspan=3, pady=10, padx=10, sticky="w")
+copied_label.grid(row=end_row + 7, column=0, columnspan=3, pady=10, padx=(generate_button.winfo_width() + 10,0), sticky="w")
 
 # Update Button
 update_button = tk.Button(app, text="Update", state="disabled", bg="green", command=apply_updates, width=7)
