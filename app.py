@@ -112,7 +112,8 @@ cache = load_cache()
 # Initialize the main application window
 app = tk.Tk()
 app.title("Prompt Generator by Mahmut Ibrahim Deniz")
-
+style = ttk.Style()
+style.theme_use('default')
 hide_window()
 
 # Concept Input
