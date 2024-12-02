@@ -63,6 +63,8 @@ def generate_prompt():
     prompt = f"Concept: {concept}\nSelected Items: {', '.join(selected_items)}\nDifficulty: {difficulty}"
     pyperclip.copy(prompt)
     save_cache({"concept": concept, "selected_items": selected_items, "difficulty": difficulty})
+    copied_label.config(text="Prompt copied to the clipboard.")
+    app.after(2000, lambda: copied_label.config(text=""))
 
 def set_update_label(is_update_available):
     if is_update_available:
@@ -71,6 +73,24 @@ def set_update_label(is_update_available):
     else:
         update_button.config(bg="gray", state="disabled", text="Up to date")
         update_label.config(text="No updates available.", fg="gray")
+        
+def hide_window():
+    app.withdraw()
+
+def show_window():
+    app.resizable(False, False)
+    app.update_idletasks()  # Ensures all geometry information is updated
+    window_width = app.winfo_width()
+    window_height = app.winfo_height()
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
+
+    x = (screen_width // 2) - (window_width // 2)
+    y = (screen_height // 2) - (window_height // 2)
+
+    # Set the app's position
+    app.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    app.deiconify()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 topics_file = os.path.join(current_dir, "topics.txt")
@@ -81,6 +101,8 @@ cache = load_cache()
 # Initialize the main application window
 app = tk.Tk()
 app.title("Prompt Generator by Mahmut Ibrahim Deniz")
+
+hide_window()
 
 # Concept Input
 tk.Label(app, text="Problem Concept").grid(row=0, column=0, padx=10, pady=5, sticky="w")
@@ -101,12 +123,14 @@ for i, item in enumerate(items):
     check_button = tk.Checkbutton(app, variable=selected_vars[i], text=item)
     check_button.grid(padx=5, pady=5, sticky="w")
     check_button.update()
-    width += check_button.winfo_width()
-    c_row = 1 + width // 275
-    c_clm = 1 + i // c_row
-    print(c_row, c_clm)
-    check_button.grid(row =c_row, column = c_clm )
-end_row = width // 4 + 1
+    # width += check_button.winfo_width()
+    # c_row = 1 + width // 275
+    # c_clm = 1 + i // c_row
+    # print(c_row, c_clm)
+    # check_button.grid(row =c_row, column = c_clm )
+    check_button.grid(row=1+i, column=1)
+# end_row = width // 4 + 1
+end_row = len(items) + 1
  
 # Difficulty Level
 tk.Label(app, text="Select Difficulty").grid(row=end_row+1, column=0, padx=10, pady=5, sticky="w")
@@ -116,8 +140,12 @@ difficulty_combobox.grid(row=end_row + 1, column=1, columnspan=4,  padx=10, pady
 difficulty_combobox.set(cache["difficulty"])
 
 # Generate Button
-generate_button = tk.Button(app, text="Generate Prompt Ilhan", command=generate_prompt)
-generate_button.grid(row=end_row + 2, column=0, columnspan=2, pady=10)
+generate_button = tk.Button(app, text="Copy Prompt to the Clipboard", command=generate_prompt)
+generate_button.grid(row=end_row + 2, column=0, columnspan=2, pady=10, padx=10)
+
+# Copied Label
+copied_label = tk.Label(app, text="", fg="green")
+copied_label.grid(row=end_row + 2, column=2, columnspan=3, pady=10, padx=10, sticky="w")
 
 # Update Button
 update_button = tk.Button(app, text="Update", state="disabled", bg="green", command=apply_updates, width=7)
@@ -127,6 +155,7 @@ update_label = tk.Label(app, text="", fg="gray", width=20)
 update_label.grid(row=0, column=5, rowspan=2,padx=10, pady=(20, 5))
 
 
+show_window()
 # Check for updates at startup
 check_for_updates()
 
