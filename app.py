@@ -100,7 +100,7 @@ def show_window():
     y = (screen_height // 2) - (window_height // 2)
 
     # Set the app's position
-    # app.geometry(f"{window_width}x{window_height}+{x}+{y}") #uncomment this line to center the window
+    app.geometry(f"{window_width}x{window_height}+{x}+{y}") #uncomment this line to center the window
     app.deiconify()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -112,12 +112,10 @@ cache = load_cache()
 # Initialize the main application window
 app = tk.Tk()
 app.title("Prompt Generator by Mahmut Ibrahim Deniz")
-style = ttk.Style()
-style.theme_use('default')
 hide_window()
 
 # Concept Input
-tk.Label(app, text="Problem Concept", bg="white", fg="black").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+tk.Label(app, text="Problem Concept").grid(row=0, column=0, padx=10, pady=5, sticky="w")
 concept_input = tk.Entry(app, width=30)
 concept_input.grid(row=0, column=1, columnspan=4, padx=10, pady=5, sticky="w")
 concept_input.insert(0, cache["concept"])
